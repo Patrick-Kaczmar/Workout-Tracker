@@ -24,49 +24,36 @@ module.exports = function (app) {
 
     app.put("/api/workouts/:id", async (req, res) => {
 
-        try {
-            let dbExercise = await db.Exercise.create({
-                type: req.body.type, name: req.body.name,
-                weight: req.body.weight, sets: req.body.sets,
-                reps: req.body.reps, duration: req.body.duration, distance: req.body.distance,
+        db.Workout.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: req.body } })
+            .then(dbWorkout => {
+                console.log(dbWorkout);
+                res.json(dbWorkout);
+            })
+            .catch(err => {
+                res.status(400).json(err);
             });
-
-            await db.Workout.findOneAndUpdate({ _id: req.params.id }, { $push: { exercises: dbExercise["_id"] } }, { new: true })
-            res.json(dbExercise)
-        } catch (err) {
-            console.log(err);
-        }
     });
 
     app.get("/api/workouts/range", (req, res) => {
-
-        db.Workout.find({}).populate("exercises").then(results => {
-            let lastSevenWorkouts = []
-            results.reverse()
-            for (let i = 0; i < 7; i++) {
-                lastSevenWorkouts.push(results[i])
-            }
-            res.json(lastSevenWorkouts)
-            console.log(lastSevenWorkouts)
-        })
-
-    //     db.Workout.aggregate([
-    //         {
-    //             $lookup: {
-    //                 from: db.Exercise,
-    //                 localField: "exercises",
-    //                 foreignField: "_id",
-    //                 as: "totalTime"
-    //             }
-    //         }
-    //     ]).then(results => {
-    //         console.log(results)
-    //         res.json(results)
-    //         console.log(results)
-    //         console.log(results.totalTime)
-    //     }).catch(err => {
-    //         res.json(err)
-    //     })
+        db.Workout.aggregate(
+            [
+                {
+                    $addFields: {
+                        totalDuration: { $sum: "$exercises.duration" }
+                    }
+                }
+            ]
+        )
+            .then((response) => {
+                const finalResult = []
+                response.reverse()
+                for(let i = 0; i < 7; i++) {
+                    finalResult.push(response[i])
+                }
+                console.log(finalResult);
+                finalResult.reverse()
+                res.json(finalResult);
+            });
     })
 
 }
