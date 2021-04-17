@@ -5,9 +5,9 @@ module.exports = function (app) {
 
     app.get("/api/workouts", (req, res) => {
         db.Workout.find({}).populate("exercises")
-        .then(response => {
-            res.json(response)
-        })
+            .then(response => {
+                res.json(response)
+            })
     });
 
 
@@ -37,5 +37,36 @@ module.exports = function (app) {
             console.log(err);
         }
     });
+
+    app.get("/api/workouts/range", (req, res) => {
+
+        db.Workout.find({}).populate("exercises").then(results => {
+            let lastSevenWorkouts = []
+            results.reverse()
+            for (let i = 0; i < 7; i++) {
+                lastSevenWorkouts.push(results[i])
+            }
+            res.json(lastSevenWorkouts)
+            console.log(lastSevenWorkouts)
+        })
+
+    //     db.Workout.aggregate([
+    //         {
+    //             $lookup: {
+    //                 from: db.Exercise,
+    //                 localField: "exercises",
+    //                 foreignField: "_id",
+    //                 as: "totalTime"
+    //             }
+    //         }
+    //     ]).then(results => {
+    //         console.log(results)
+    //         res.json(results)
+    //         console.log(results)
+    //         console.log(results.totalTime)
+    //     }).catch(err => {
+    //         res.json(err)
+    //     })
+    })
 
 }
