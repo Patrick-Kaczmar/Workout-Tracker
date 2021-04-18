@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+// creates a new workout model compatible with the seed file
 const WorkoutSchema = new Schema({
     day: {
         type: Date,
