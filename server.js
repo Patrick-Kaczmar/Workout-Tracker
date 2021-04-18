@@ -1,6 +1,6 @@
 const express = require("express");
 let mongoose = require("mongoose");
-const mongojs = require("mongojs");
+// const mongojs = require("mongojs");
 
 const app = express();
 
@@ -11,19 +11,19 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
+mongoose.connect(process.env.MONGO_ATLAS || "mongodb://localhost/workout", {
   useNewUrlParser: true,
   useFindAndModify: false
 }).then(() => console.log("connected to db"))
 
-const databaseUrl = "fitness_tracker";
-const collections = ["Workout"];
+// const databaseUrl = "fitness_tracker";
+// const collections = ["Workout"];
 
-const db = mongojs(databaseUrl, collections);
+// const db = mongojs(databaseUrl, collections);
 
-db.on("error", error => {
-  console.log("Database Error:", error);
-});
+// db.on("error", error => {
+//   console.log("Database Error:", error);
+// });
 
 require("./routes/api-routes.js")(app);
 require("./routes/html-routes.js")(app);
