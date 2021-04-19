@@ -13,6 +13,8 @@ app.use(express.static("public"));
 
 mongoose.connect(process.env.MONGO_ATLAS || "mongodb://localhost/workout", {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
   useFindAndModify: false
 }).then(() => console.log("connected to db"))
 
