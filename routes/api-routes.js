@@ -50,12 +50,14 @@ module.exports = function (app) {
                 const finalResult = []
                 response.reverse()
                 for(let i = 0; i < 7; i++) {
-                    finalResult.push(response[i])
+                    if (response[i] == undefined) {
+                        continue
+                    }
+                    else {finalResult.push(response[i])}
                 }
-                console.log(finalResult);
                 finalResult.reverse()
+                console.log(finalResult);
                 res.json(finalResult);
             });
     })
-
 }
